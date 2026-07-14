@@ -1,6 +1,7 @@
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent # ✅ use create_agent in v1.x
+import requests
 
 # Define a tool
 @tool
@@ -21,6 +22,22 @@ def division(a:float, b:float)-> float:
     """Perform division operation on two numbers"""
     return a / b
 
+
+
+@tool
+def weather(city: str) -> str:
+    # Normally I specify the input in comment of the tool
+    """Get real weather data using API, based on the given city"""
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+    "q": city,
+    "appid": "9fd7a449d055dba26a982a3220f32aa2", # make sure we don't upload public + openAI
+    }
+    resp = requests.get(url, params=params)
+    data = resp.json()
+    return data
+
+
  # Initialize LLM
 
 llm = ChatOpenAI(model="gpt-4o-mini")
@@ -29,20 +46,21 @@ llm = ChatOpenAI(model="gpt-4o-mini")
 # Create the agent with your own system prompt
 agent = create_agent(
     model=llm,
-    tools=[add, product, division], # Options of tool to be. used
+    tools=[add, product, division, weather], # Options of tool to be. used
     system_prompt=(
-    "You are a precise math agent. "
-    "Always use the available tools for calculations. "
+    "You are a miscellenous agent to help me with day to day operation. "
+    "Always use the available tools to solve the given problems. "
     "Answer directly with the result, no greetings or chit-chat."
     "If there is no tools available that can resolve the problem, answer 'I don't know'" #guardrail
     ),
 )
+
 # Invoke the agent – new API expects `messages`
 result = agent.invoke(
     {
     "messages": [
        
-        ("user", "Use your tools to calculate 10 divide by 3") # Some agent will answer it as 3.5 + (-4.5)
+        ("user", "It is raining in Kuala Lumpur now?") 
         ]
     }
 )
