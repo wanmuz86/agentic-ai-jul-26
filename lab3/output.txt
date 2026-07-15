@@ -1,5 +1,11 @@
-Weather in Kuala Lumpur:
-- Current Temperature: 33.14 °C (with 10% range: 36.50 °C)
-- Feels Like: 38.36 °C (with 10% range: 42.20 °C)
-- Min Temperature: 33.13 °C (with 10% range: 36.44 °C)
-- Max Temperature: 34.11 °C (with 10% range: 37.52 °C)
+Current Weather in Kuala Lumpur:
+- Current Temperature: 29°C (Range: 31.9°C)
+
+Daily Forecast:
+- Wednesday, July 15: Low: 26°C (Range: 28.6°C), High: 34°C (Range: 37.4°C)
+- Thursday, July 16: Low: 24°C (Range: 26.4°C), High: 34°C (Range: 37.4°C)
+- Friday, July 17: Low: 25°C (Range: 27.5°C), High: 32°C (Range: 35.2°C)
+- Saturday, July 18: Low: 24°C (Range: 26.4°C), High: 31°C (Range: 34.1°C)
+- Sunday, July 19: Low: 24°C (Range: 26.4°C), High: 31°C (Range: 34.1°C)
+- Monday, July 20: Low: 24°C (Range: 26.4°C), High: 32°C (Range: 35.2°C)
+- Tuesday, July 21: Low: 22°C (Range: 24.2°C), High: 32°C (Range: 35.2°C)
