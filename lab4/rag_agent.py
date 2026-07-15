@@ -2,7 +2,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.tools import tool
 from langchain_chroma import Chroma # Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter # Splitter
-from langchain_community.document_loaders import PyPDFLoader # Load the pdf
+from langchain_community.document_loaders import PyPDFLoader, TextLoader # Load the pdf and TextLoader
 from langchain.agents import create_agent
 
 import glob # to open file blob
@@ -15,6 +15,12 @@ for pdf in pdf_files:
     loader = PyPDFLoader(pdf)
     docs = loader.load() #load it inside the documents []
     documents.extend(docs)
+
+# Load TXT files
+txt_files = glob.glob("./docs/*.txt")
+for txt in txt_files:
+    loader = TextLoader(txt, encoding="utf-8")
+    documents.extend(loader.load())
 
 # chunking the document to be loaded in the DB
 # RecursiveCharacterTextSplitter - Is one of the strategy of transforming document into data in Vector DB
@@ -84,6 +90,9 @@ print(ask_agent("Summarize the onboarding SOP in 5 bullet points.")) # Summariza
 
 print("Question 4: Does the security policy mention daily backups?")
 print(ask_agent("Does the security policy mention daily backups?")) # Verify from document
+
+print("Question 5: Summarize what is RAG")
+print(ask_agent("Summarize what is RAG?")) # Verify from txt file
 
 
 
