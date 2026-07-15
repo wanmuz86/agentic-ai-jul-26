@@ -1,0 +1,5 @@
+Employee Handbook
+
+Company working hours are 9:00 AM to 6:00 PM.
+Employees must follow data protection, access control, and device security policies.
+All system access must be approved by the employee's manager.

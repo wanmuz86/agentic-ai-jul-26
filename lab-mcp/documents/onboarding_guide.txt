@@ -1,0 +1,11 @@
+Employee Onboarding Guide
+
+All new employees must complete the following:
+- Security awareness training
+- MFA enrollment
+- Laptop configuration
+- VPN access request
+- HR document submission
+- Department briefing
+
+New IT and Data Team staff must also complete data protection training.

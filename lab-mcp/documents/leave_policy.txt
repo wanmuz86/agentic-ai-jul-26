@@ -1,0 +1,7 @@
+Employees are entitled to:
+- 14 annual leave days per year
+- 14 medical leave days per year
+- 60 hospitalization leave days per year
+
+Leave requests must be submitted at least 3 working days in advance.
+Managers must approve leave requests before they are confirmed.
