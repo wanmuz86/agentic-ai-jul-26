@@ -31,7 +31,7 @@ def weather(city: str) -> str:
     url = "https://api.openweathermap.org/data/2.5/weather"
     params = {
     "q": city,
-    "appid": "xx", # make sure we don't upload public + openAI
+    "appid": "", # make sure we don't upload public + openAI
     }
     resp = requests.get(url, params=params)
     data = resp.json()

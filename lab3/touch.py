@@ -5,6 +5,8 @@ from openai import OpenAI
 from langchain_chroma import Chroma
 from langchain.agents import create_agent
 
+import requests
+
 
 #Creating the agent
 
@@ -79,8 +81,21 @@ def memory_search(query: str) -> str:
     return "\n".join([r.page_content for r in results])
 
 
+@tool
+def weather(city: str) -> str:
+    # Normally I specify the input in comment of the tool
+    """Get real weather data using API, based on the given city, weather return in Kelvin"""
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+    "q": city,
+    "appid": "", # make sure we don't upload public + openAI
+    }
+    resp = requests.get(url, params=params)
+    data = resp.json()
+    return data
 
-tools = [web_search, calculator, file_writer, memory_save, memory_search]
+
+tools = [web_search, calculator, file_writer, memory_save, memory_search, weather]
 
 
 agent = create_agent(
@@ -100,9 +115,9 @@ def ask_agent(prompt: str) -> str:
     state = agent.invoke({
         "messages": [{"role": "user", "content": prompt}]
     })
-    print("---- RAW STATE ----")
-    print(state)
-    print("-------------------")
+    # print("---- RAW STATE ----")
+    # print(state)
+    # print("-------------------")
     return state["messages"][-1].content
 
 
@@ -127,3 +142,8 @@ if __name__ == "__main__":
 
     # Test 5: File writer
     ask_agent(" Write a summary of what this agent has done so far in a file.")
+    
+    print(ask_agent("Hi my name is Wan, remember that!"))
+    print(ask_agent("Do you know whave any information on my name?"))
+    
+    print(ask_agent("Get me the weather of Kuala Lumpur. for each temperature add 10% range, convert it to celcius and save this information inside file"))
