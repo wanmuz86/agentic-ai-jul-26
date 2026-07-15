@@ -1,0 +1,152 @@
+# RAG SYSTEM TRAINING NOTES
+# Topic: Introduction to Retrieval-Augmented Generation (RAG) for AI Applications
+
+Retrieval-Augmented Generation, commonly called RAG, is an AI design pattern where a language model does not rely solely on its internal parameters to answer questions. Instead, the model retrieves relevant documents or information from an external knowledge source, such as a vector database, file storage, websites, or internal company documents, and then uses this retrieved material to craft a more accurate and grounded response.
+
+The core idea is simple: Large Language Models (LLMs) are powerful, but they cannot store all information, and their knowledge becomes outdated. RAG addresses both limitations by connecting LLMs to real or dynamic data sources.
+
+A RAG system typically includes the following components:
+1. A retriever — usually a vector database like FAISS, Pinecone, Chroma, Weaviate, or Elastic.
+2. A chunked document store — documents must be split into smaller pieces for embedding.
+3. An embedding model — converts text chunks into numerical vectors.
+4. A language model — generates a final answer using the retrieved context.
+5. A pipeline or chain — orchestrates the flow from query → retrieval → answer.
+
+Why RAG matters:
+- It prevents hallucinations by grounding answers in real data.
+- It enables domain-specific knowledge without retraining the LLM.
+- It allows continuous updates to knowledge without fine-tuning.
+- It creates explainable systems where sources and citations can be shown.
+
+There are two main categories of RAG:
+- **Basic RAG**: Retrieve top-K chunks and place them into the model prompt.
+- **Advanced RAG**: Involves re-ranking, multi-query expansion, query rewriting, agents, graph-based retrieval, or hybrid BM25 + vector search.
+
+In Basic RAG, the workflow is straightforward:
+The user inputs a query.
+The system embeds the query using the same embedding model used for documents.
+The system performs similarity search to find the closest matching chunks.
+The top K chunks are injected into a prompt.
+The LLM uses this contextual information to answer.
+This version is the easiest for students and developers to build.
+
+Chunking strategy is critical for RAG performance. Good chunking preserves context, reduces fragmentation, and ensures that each piece of information is meaningful. Common chunk sizes are between 300–600 tokens, but the best size depends on the nature of the documents. For example:
+- Code documentation should use smaller chunks because concepts are tightly coupled.
+- Legal or academic text can use larger chunks to maintain coherence.
+- PDFs with bullet points require special handling because formatting is lost.
+
+Another important topic is embedding models. Embeddings map text to high-dimensional vectors that represent semantic meaning. Models such as OpenAI text-embedding-3-small, text-embedding-3-large, or open-source models like BGE-base, BGE-large, or Instructor-XL are frequently used. Better embeddings produce more accurate retrieval.
+
+The retriever is the engine that finds the most relevant text. Vector search retrieves chunks based on similarity between embeddings, but systems like hybrid search combine:
+- Sparse (keyword-based) retrieval using BM25 or TF-IDF
+- Dense (embedding) retrieval using vector similarity
+
+Hybrid systems often provide the best of both worlds, improving generalization and handling rare words or domain-specific terms.
+
+RAG evaluation is another key concept. Even if RAG is implemented successfully, a system must be tested for:
+- Faithfulness (does the answer rely on retrieved context?)
+- Relevance (are the retrieved chunks actually related to the question?)
+- Accuracy (is the answer correct given the documents?)
+- Coverage (does the system retrieve enough relevant information?)
+- Absence of hallucination
+
+LangChain provides utilities like:
+- Document loaders for text, PDF, HTML, docx
+- Text splitters such as RecursiveCharacterTextSplitter
+- Vector stores such as Chroma, FAISS, and Pinecone integrations
+- Retrievers: vector store retrievers, multi-query retrievers, parent-document retrievers
+- Chains: RetrievalQA, ConversationalRetrievalChain
+- Tools and runnables for building custom pipelines
+
+A basic RAG pipeline in LangChain consists of:
+1. Loading a file such as notes.txt
+2. Splitting into chunks
+3. Embedding the chunks
+4. Storing the embedded chunks in a vector store
+5. Running similarity search
+6. Supplying retrieved text into an LLM prompt
+
+During the exercise, students should be aware of common RAG pitfalls:
+- Overlapping chunks incorrectly may create duplicated text.
+- Too large chunks reduce recall since fewer entries fit into the embedding space.
+- Too small chunks may cause context fragmentation.
+- Using a bad embedding model dramatically reduces retrieval quality.
+- Using top_k=1 is usually insufficient; top_k between 3–8 is more robust.
+- If retrieved chunks aren't relevant, the LLM answer will still hallucinate.
+
+RAG systems benefit from prompt engineering. A typical RAG prompt includes:
+Instructions to use the provided context.
+A rule not to hallucinate.
+A section of retrieved documents.
+An answer section for the model to write the response.
+
+An example RAG prompt:
+“Answer the question using only the following context. If the answer is not present in the context, say ‘I don’t know.’ Do not invent facts.”
+
+In a more advanced pipeline, we might add:
+- Query re-writing: generate 3–5 variations of the user question to increase recall.
+- Re-ranking: use cross-encoder models to score retrieved chunks.
+- Named entity extraction: extract key entities and expand retrieval.
+- Graph retrieval: build a knowledge graph for relationship-aware retrieval.
+- Agentic retrieval: let an agent choose what queries to ask the retriever.
+
+RAG is especially useful for enterprise applications:
+- Policies and SOP retrieval
+- Medical and legal documents (with caution)
+- Customer support knowledge bases
+- Product specs and technical manuals
+- Education content, assignments, lecture notes
+- HR handbooks and company procedures
+- Engineering design documents
+- Software architecture references and API documentation
+
+RAG does not require fine-tuning the base LLM. This makes it:
+- Cheap to build
+- Easy to update
+- Fast to deploy
+- Flexible across domains
+
+However, RAG cannot fix poorly written documents. If source material contains outdated, inconsistent, or incorrect information, the LLM output will reflect that. High-quality documentation is essential.
+
+Latency is an important issue in production RAG systems. Retrieval adds extra steps (embedding + vector search), so caching and batching are often needed. Vector stores such as Chroma are fast for local development, while systems like Pinecone or Weaviate are scaled for large production workloads.
+
+Another key concept is metadata. Each chunk should have metadata fields such as:
+- Source file name
+- Page number
+- Section title
+- Tags (topic, category, department)
+Metadata helps with filtering and improves retrieval accuracy.
+
+For example, retrieving only chunks tagged with “policy”, or filtering to a specific department such as “finance”, can dramatically improve results. Metadata also allows advanced workflows in LangChain where retrievers only search relevant subsets of documents.
+
+During a typical RAG exercise, students will run the following steps:
+- Load notes.txt with TextLoader
+- Split it into overlapping chunks
+- Embed the chunks
+- Store them in Chroma or FAISS
+- Perform similarity search manually to observe results
+- Use RetrievalQA to answer questions based on the notes
+- Test the system with correct and incorrect queries
+- Analyze which chunks were retrieved and why
+- Observe how changing chunk size impacts retrieval quality
+
+Good teaching questions include:
+“What is chunking and why is it required?”
+“What makes an embedding model good for retrieval?”
+“What is vector similarity?”
+“Why does RAG reduce hallucination?”
+“What is the difference between basic RAG and advanced RAG?”
+“Why is metadata valuable in RAG pipelines?”
+“What happens if a user asks something outside the document scope?”
+
+A simple but powerful mental model for RAG:
+THE MODEL CAN ONLY ANSWER FROM WHAT YOU GIVE IT.
+If retrieval fails, the model will hallucinate unless your prompt explicitly blocks it.
+
+Students should also understand that RAG is not search. Search returns documents; RAG returns synthesized natural-language answers grounded in documents.
+
+The vector store is the “memory” of the RAG system, while the LLM is the “thinking” component. Together they form a hybrid intelligent system.
+
+In conclusion, RAG is one of the most important techniques in modern AI development. It bridges the gap between static pretrained models and the ever-changing information needs of real-world applications. By mastering RAG, developers gain the ability to build intelligent assistants, chatbots, data exploration tools, and enterprise AI systems that remain accurate, up-to-date, and trustworthy.
+
+These notes provide the foundational ideas, concepts, and workflows needed to understand and implement RAG using LangChain. In your exercise, you will load this notes.txt file, index it, and build your own retrieval-augmented question-answering system that can answer questions based entirely on the information stored within these notes.
